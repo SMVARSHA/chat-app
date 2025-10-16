@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "nodemon server.js",  
     "start": "node server.js"    ,
-    "postinstall": "cd ../client && npm install && npm run build"
+    "postinstall":  "echo '✅ CURRENT DIR:' && pwd && echo '✅ LIST /server:' && ls -la && echo '✅ LIST ../client:' && ls -la ../client && cd ../client && npm install && npm run build"
+
   
   },
   "dependencies": {
