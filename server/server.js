@@ -6,7 +6,6 @@ import { connectDB } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
-import { Socket } from "socket.io";
 
 
 
@@ -16,7 +15,9 @@ const server=http.createServer(app)
 
 ///Initialize socket.io server
 export const io = new Server(server,{
-    cors:{origin:"*"}
+    cors:{
+        origin:process.env.CLIENT_URL || "http://localhost:5173",
+     }
 })
 
 //store online users
@@ -24,25 +25,34 @@ export const userSocketMap = {};//{userId:socketId}
 
 //Socket.io connection handler
 io.on("connection",(socket)=>{
-    const userId = socket.handshake.query.userId;
+    const userId = socket.handshake.query?.userId;
     console.log("User Connected",userId);
 
-    if(userId) userSocketMap[userId] = socket.id;
+    if(!userId) {
+        console.warn("⚠️ userId missing on connection");
+        return;
+    }
+    console.log("User Connected:", userId);
+    userSocketMap[userId] = socket.id;
+        
 
     //emit  online users to all connected elements
     io.emit("getOnlineUsers",Object.keys(userSocketMap));
 
     socket.on("disconnect",()=>{
         console.log("User Dissconnect",userId);
-        delete userSocketMap[userId],
-        io.emit("getOnlineUsers",Object.keys(userSocketMap))
+        delete userSocketMap[userId];
+        io.emit("getOnlineUsers",Object.keys(userSocketMap));
     })
 })
 
 
 //Middleware Setup
 app.use(express.json({limit:"4mb"}));
-app.use(cors());
+app.use(
+    cors({
+         origin: process.env.CLIENT_URL || "http://localhost:5173",
+    }));
 
 //Route setup
 app.use("/api/status",(req,res)=> res.send("Server is live"));
@@ -54,10 +64,38 @@ await connectDB();
 
 
 const PORT = process.env.PORT || 5002;
-console.log("👉 Current NODE_ENV:", process.env.NODE_ENV);
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+console.log("👉 Current NODE_ENV:",NODE_ENV);
 console.log("👉 PORT from env:", process.env.PORT);
 
-server.listen(PORT, () => console.log(`✅ Server is running on PORT: ${PORT}`));
+const startServer = (port) => {
+  server
+    .listen(port, () => console.log(`✅ Server running on PORT: ${port}`))
+    .on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.warn(`⚠️ Port ${port} in use, trying ${port + 1}...`);
+        startServer(port + 1);
+      } else {
+        console.error(err);
+      }
+    });
+};
+
+startServer(PORT);
+
+// Graceful shutdown
+process.on("SIGINT", async () => {
+  console.log("🔴 Server shutting down...");
+  io.close();
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  console.log("🔴 Server terminated...");
+  io.close();
+  process.exit(0);
+});
 
  //export  server for Vervel
  export default server;
