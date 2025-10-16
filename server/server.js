@@ -35,7 +35,7 @@ io.on("connection",(socket)=>{
     socket.on("disconnect",()=>{
         console.log("User Dissconnect",userId);
         delete userSocketMap[userId],
-        io.emit("getOnlineUsers",Object,keys(userSocketMap))
+        io.emit("getOnlineUsers",Object.keys(userSocketMap))
     })
 })
 
@@ -53,9 +53,11 @@ app.use("/api/messages",messageRouter);
 await connectDB();
 
 
-const PORT =  5002;//process.env.PORT ||
-server.listen(PORT,()=> console.log("Server is running on PORT: " +PORT));
- 
+const PORT = process.env.PORT || 5002;
+console.log("👉 Current NODE_ENV:", process.env.NODE_ENV);
+console.log("👉 PORT from env:", process.env.PORT);
+
+server.listen(PORT, () => console.log(`✅ Server is running on PORT: ${PORT}`));
 
  //export  server for Vervel
  export default server;
