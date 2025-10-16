@@ -2,15 +2,15 @@
   "name": "server",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": {
-    "server": "nodemon server.js",
-    "start": "node server.js"
-  },
   "type": "module",
+  "description": "",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "scripts": {
+    "dev": "nodemon server.js",  
+    "start": "node server.js"    
+  },
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",

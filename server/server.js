@@ -69,20 +69,8 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 console.log("👉 Current NODE_ENV:",NODE_ENV);
 console.log("👉 PORT from env:", process.env.PORT);
 
-const startServer = (port) => {
-  server
-    .listen(port, () => console.log(`✅ Server running on PORT: ${port}`))
-    .on("error", (err) => {
-      if (err.code === "EADDRINUSE") {
-        console.warn(`⚠️ Port ${port} in use, trying ${port + 1}...`);
-        startServer(port + 1);
-      } else {
-        console.error(err);
-      }
-    });
-};
+server.listen(PORT, () => console.log(`✅ Server running on PORT: ${PORT}`));
 
-startServer(PORT);
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
