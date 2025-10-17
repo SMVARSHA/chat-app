@@ -23,10 +23,10 @@ export const io = new Server(server, {
     origin: function (origin, callback) {
       // allow Postman or server requests
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
+      if (allowedOrigins.includes(origin))return callback(null, true); 
         return callback(new Error("CORS policy does not allow this origin"));
-      }
-      callback(null, true);
+      
+     
     },
     credentials: true,
   },
