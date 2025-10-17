@@ -7,6 +7,11 @@ import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 
+// Allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  process.env.CLIENT_URL    // deployed frontend
+].filter(Boolean);
 
 //Create Express app and HTTP server
 const app= express();
@@ -15,7 +20,8 @@ const server=http.createServer(app)
 ///Initialize socket.io server
 export const io = new Server(server,{
     cors:{
-        origin:process.env.CLIENT_URL || "http://localhost:5173",
+        origin:allowedOrigins,
+        credentials: true,
      }
 })
 
@@ -49,10 +55,17 @@ io.on("connection",(socket)=>{
 //Middleware Setup
 app.use(express.json({limit:"4mb"}));
 app.use(
-    cors({
-         origin: process.env.CLIENT_URL || "http://localhost:5173",
-    }));
-
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow Postman or server requests
+      if (allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error("CORS policy does not allow this origin"), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true
+  })
+);
 app.get("/", (req, res) => {
   res.send("✅ Server is running! Welcome to the backend.");
 });
