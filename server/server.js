@@ -6,13 +6,6 @@ import { connectDB } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
-import path from "path";
-import { fileURLToPath } from "url";
-
-
-// Setup __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 
 //Create Express app and HTTP server
@@ -38,7 +31,7 @@ io.on("connection",(socket)=>{
         console.warn("⚠️ userId missing on connection");
         return;
     }
-    console.log("User Connected:", userId);
+    
     userSocketMap[userId] = socket.id;
         
 
@@ -75,16 +68,6 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 console.log("👉 Current NODE_ENV:",NODE_ENV);
 console.log("👉 PORT from env:", process.env.PORT);
 
-// ✅ Serve frontend in production
-if (NODE_ENV === "production") {
-  const clientBuildPath = path.join(__dirname, "../client/dist");
-
-  app.use(express.static(clientBuildPath));
-
-  app.get("*", (req, res) => {
-  res.sendFile(path.join(clientBuildPath, "index.html"));
-  });
-}
 
 server.listen(PORT, () => console.log(`✅ Server running on PORT: ${PORT}`));
 
