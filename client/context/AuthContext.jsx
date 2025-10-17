@@ -3,7 +3,7 @@ import axios from 'axios'
 import toast from "react-hot-toast";
 import {io} from 'socket.io-client';
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5002";
 console.log("Backend URL:", backendUrl); 
 axios.defaults.baseURL = backendUrl;
 
@@ -36,7 +36,9 @@ export const AuthProvider =({children})=>{
             console.log("Credentials:", credentials);
 
 
-            const { data } = await axios.post(`/api/auth/${state}`, credentials);
+            const { data } = await axios.post(`/api/auth/${state}`, credentials,{
+                  withCredentials: true
+            })
             if (data.success) {
                 setAuthUser(data.user || data.userData);
                 axios.defaults.headers.common["token"] = data.token;
@@ -66,7 +68,9 @@ export const AuthProvider =({children})=>{
     //update profile function to handle user profile updates
     const updateProfile = async (body)=>{
        try{
-        const {data} = await axios.post("/api/auth/update-profile",body);
+        const {data} = await axios.post("/api/auth/update-profile",body,{
+            withCredentials: true
+        });
         if(data.success){
            setAuthUser(data.user);
            toast.success("Profile updated successfully") 
@@ -84,7 +88,8 @@ export const AuthProvider =({children})=>{
             query:{
                 userId: userData._id,
 
-            }
+            },
+            withCredentials: true
         });
         newSocket.connect()
         setSocket(newSocket);
