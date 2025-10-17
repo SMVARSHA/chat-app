@@ -59,7 +59,15 @@ app.use("/api/auth",userRouter);
 app.use("/api/messages",messageRouter);
 
 //Connect to MongoDB
-await connectDB();
+try {
+  await connectDB();
+  console.log("✅ MongoDB connected");
+} catch (err) {
+  console.error("❌ MongoDB connection failed:", err);
+  process.exit(1); // stop server if DB fails
+}
+
+
 
 
 const PORT = process.env.PORT || 5002;
