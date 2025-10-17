@@ -53,6 +53,11 @@ app.use(
          origin: process.env.CLIENT_URL || "http://localhost:5173",
     }));
 
+app.get("/", (req, res) => {
+  res.send("✅ Server is running! Welcome to the backend.");
+});
+
+
 //Route setup
 app.use("/api/status",(req,res)=> res.send("Server is live"));
 app.use("/api/auth",userRouter);
