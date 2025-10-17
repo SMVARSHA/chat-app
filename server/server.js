@@ -18,13 +18,19 @@ const app= express();
 const server=http.createServer(app)
 
 ///Initialize socket.io server
-export const io = new Server(server,{
-    cors:{
-        origin:allowedOrigins,
-        credentials: true,
-     }
-})
-
+export const io = new Server(server, {
+  cors: {
+    origin: function (origin, callback) {
+      // allow Postman or server requests
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        return callback(new Error("CORS policy does not allow this origin"));
+      }
+      callback(null, true);
+    },
+    credentials: true,
+  },
+});
 //store online users
 export const userSocketMap = {};//{userId:socketId}
 
@@ -58,10 +64,10 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true); // allow Postman or server requests
-      if (allowedOrigins.indexOf(origin) === -1) {
-        return callback(new Error("CORS policy does not allow this origin"), false);
-      }
-      return callback(null, true);
+      if (allowedOrigins.indexOf(origin))return callback(null, true); 
+         callback(new Error("CORS policy does not allow this origin"));
+      
+      
     },
     credentials: true
   })
