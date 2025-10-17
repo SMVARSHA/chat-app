@@ -64,9 +64,11 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin) return callback(null, true); // allow Postman or server requests
-      if (allowedOrigins.indexOf(origin))return callback(null, true); 
-         callback(new Error("CORS policy does not allow this origin"));
-      
+      if (allowedOrigins.includes(origin)){
+         return callback(null, true);
+         
+      } 
+      callback(new Error("CORS policy does not allow this origin"));
       
     },
     credentials: true
