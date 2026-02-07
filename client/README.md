@@ -21,3 +21,25 @@ It is built using the MERN stack and supports one-to-one messaging with a respon
 **Real-time:** Socket.io  
 **Authentication:** JWT
 
+## 📸 Screenshots
+Below are some visuals showcasing the user interface and chat experience.
+
+### Sign Up Page
+![Sign Up Page](screenshots/signup.png)
+
+### Chat Interface
+![Chat Interface](screenshots/chat-ui.png)
+
+## ⚙️ Installation & Setup
+
+1. Clone the repository
+```bash
+git clone https://github.com/SMVARSHA/chat-app.git
+cd chat-app
+npm install
+npm start
+
+
+
+**Authentication:** JWT
+
